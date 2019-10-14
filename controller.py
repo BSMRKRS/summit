@@ -9,14 +9,8 @@ def interrupted(signum, frame):
     RPL.servoWrite(0,0)
     RPL.servoWrite(1,1500)
 
-def forward(speed):
-    RPL.servoWrite(2,speed + 1000)
-    time.sleep(0.25)
-    RPL.servoWrite(2,speed)
-
-def backward(speed):
-    RPL.servoWrite(2,speed - 1000)
-    time.sleep(0.25)
+def move(speed):
+    print("Setting speed to %s" % (speed))
     RPL.servoWrite(2,speed)
 
 def turn(direction):
@@ -41,11 +35,11 @@ while True:
         break
     elif ch == 'w':
         if race_mode:
-            forward(2000)
+            move(2000)
         else:
-            forward(1600)
+            move(1800)
     elif ch == 's':
-        backward(1400)
+        move(1300)
     elif ch == 'a':
         turn(1000)
     elif ch == 'd':
