@@ -24,18 +24,7 @@ def move(speed):
     if speed == 0 or speed == 1500:
         RPL.servoWrite(2,0)
     else:
-        if initial == True:
-            initial = False
-            if speed > 1500:
-                increment = 50
-            else:
-                increment = -50
-
-            for temp_speed in range(1500,speed,increment):
-                RPL.servoWrite(2,temp_speed)
-                time.sleep(0.15)
-        else:
-            RPL.servoWrite(2,speed)
+        RPL.servoWrite(2,speed)
 
 def turn(direction):
     #1000 = left
@@ -61,12 +50,9 @@ while True:
     elif ch == ' ':
         stop()
     elif ch == 'w':
-        if race_mode:
-            move(2000)
-        else:
-            move(1610)
+        move(2000)
     elif ch == 's':
-        move(1460)
+        move(1000)
     elif ch == 'a':
         turn(1000)
     elif ch == 'd':
