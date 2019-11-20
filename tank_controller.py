@@ -41,6 +41,10 @@ while True:
         termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
         break
     elif ch == 'w':
+        forward()
     elif ch == 's':
+        backward()
     elif ch == 'a':
+        left()
     elif ch == 'd':
+        right()
