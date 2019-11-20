@@ -1,8 +1,11 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
-Lmotor_pin = 0
-Rmotor_pin = 1
+left1_pin = 0
+left2_pin = 1
+
+right1_pin = 2
+right2_pin = 3
 
 
 fd = sys.stdin.fileno()
@@ -11,21 +14,29 @@ old_settings = termios.tcgetattr(fd)
 def interrupted(signum, frame):
     stop()
 
-def forward():
-    RPL.servoWrite(Lmotor_pin,2000)
-    RPL.servoWrite(Rmotor_pin,1000)
-def backward():
-    RPL.servoWrite(Rmotor_pin,2000)
-    RPL.servoWrite(Lmotor_pin,1000)
-def left():
-    RPL.servoWrite(Lmotor_pin,2000)
-    RPL.servoWrite(Rmotor_pin,2000)
-def right():
-    RPL.servoWrite(Lmotor_pin,1000)
-    RPL.servoWrite(Rmotor_pin,1000)
+def left(direction):
+    RPL.servoWrite(left1_pin,0)
+    RPL.servoWrite(left2_pin,0)
+    if direction == "forward":
+        RPL.servoWrite(left1_pin,2000)
+    else:
+        RPL.servoWrite(left2_pin,2000)
+
+def right(direction):
+    RPL.servoWrite(right1_pin,0)
+    RPL.servoWrite(right2_pin,0)
+    if direction == "forward":
+        RPL.servoWrite(right1_pin,2000)
+    else:
+        RPL.servoWrite(right2_pin,2000)
+
 def stop():
-    RPL.servoWrite(Lmotor_pin,0)
-    RPL.servoWrite(Rmotor_pin,0)
+    RPL.servoWrite(left1_pin,0)
+    RPL.servoWrite(left2_pin,0)
+    RPL.servoWrite(right1_pin,0)
+    RPL.servoWrite(right2_pin,0)
+
+
 
 
 signal.signal(signal.SIGALRM, interrupted)
@@ -41,10 +52,14 @@ while True:
         termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
         break
     elif ch == 'w':
-        forward()
+        right("forward")
+        left("forward")
     elif ch == 's':
-        backward()
+        right("forward")
+        left("backward")
     elif ch == 'a':
-        left()
+        right("backward")
+        left("backward")
     elif ch == 'd':
-        right()
+        right("backward")
+        left("forward")
