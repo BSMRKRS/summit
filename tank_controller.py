@@ -1,11 +1,11 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
-left1_pin = 0
-left2_pin = 1
-
-right1_pin = 2
-right2_pin = 3
+right_backward = 3
+right_forward  = 2
+#frequency = 20k
+left_backward  = 1
+left_forward   = 0
 
 
 fd = sys.stdin.fileno()
@@ -15,26 +15,32 @@ def interrupted(signum, frame):
     stop()
 
 def left(direction):
-    RPL.servoWrite(left1_pin,0)
-    RPL.servoWrite(left2_pin,0)
     if direction == "forward":
-        RPL.servoWrite(left1_pin,2000)
+        RPL.servoWrite(left_backward,0)
+        RPL.servoWrite(left_forward,20000)
+    elif direction == "backward":
+        RPL.servoWrite(left_forward,0)
+        RPL.servoWrite(left_backward,20000)
     else:
-        RPL.servoWrite(left2_pin,2000)
+        print("Invalid input")
+        stop()
 
 def right(direction):
-    RPL.servoWrite(right1_pin,0)
-    RPL.servoWrite(right2_pin,0)
     if direction == "forward":
-        RPL.servoWrite(right1_pin,2000)
+        RPL.servoWrite(right_backward,0)
+        RPL.servoWrite(right_forward,20000)
+    elif direction == "backward":
+        RPL.servoWrite(right_forward,0)
+        RPL.servoWrite(right_backward,20000)
     else:
-        RPL.servoWrite(right2_pin,2000)
+        print("Invalid input")
+        stop()
 
 def stop():
-    RPL.servoWrite(left1_pin,0)
-    RPL.servoWrite(left2_pin,0)
-    RPL.servoWrite(right1_pin,0)
-    RPL.servoWrite(right2_pin,0)
+    RPL.servoWrite(right_backward,0)
+    RPL.servoWrite(right_forward,0)
+    RPL.servoWrite(left_backward,0)
+    RPL.servoWrite(left_forward,0)
 
 
 
@@ -42,24 +48,33 @@ def stop():
 signal.signal(signal.SIGALRM, interrupted)
 tty.setraw(sys.stdin.fileno())
 print("Press q to quit")
-while True:
-    DELAY = 0.5
-    #key press delay is 0.5 seconds
-    signal.setitimer(signal.ITIMER_REAL,DELAY)
-    ch = sys.stdin.read(1)
-    signal.setitimer(signal.ITIMER_REAL,0)
-    if ch == 'q':
-        termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
-        break
-    elif ch == 'w':
-        right("forward")
-        left("forward")
-    elif ch == 's':
-        right("forward")
-        left("backward")
-    elif ch == 'a':
-        right("backward")
-        left("backward")
-    elif ch == 'd':
-        right("backward")
-        left("forward")
+try:
+    while True:
+        DELAY = 0.5
+        #key press delay is 0.5 seconds
+        signal.setitimer(signal.ITIMER_REAL,DELAY)
+        ch = sys.stdin.read(1)
+        signal.setitimer(signal.ITIMER_REAL,0)
+        if ch == 'q':
+            stop()
+            termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
+            break
+        elif ch == ' ':
+            print("DEUS HALT")
+            stop()
+        elif ch == 'w':
+            right("forward")
+            left("forward")
+        elif ch == 's':
+            right("backward")
+            left("backward")
+        elif ch == 'd':
+            left("forward")
+            right("backward")
+        elif ch == 'a':
+            left("backward")
+            right("forward")
+except:
+    print("Connection Dropped")
+    stop()
+    exit()
