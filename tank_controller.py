@@ -3,9 +3,9 @@ import sys,tty,termios,signal,setup,time
 
 right_backward = 3
 right_forward  = 2
-#frequency = 20k
 left_backward  = 1
 left_forward   = 0
+speed = 20000
 
 
 fd = sys.stdin.fileno()
@@ -17,10 +17,10 @@ def interrupted(signum, frame):
 def left(direction):
     if direction == "forward":
         RPL.servoWrite(left_backward,0)
-        RPL.servoWrite(left_forward,20000)
+        RPL.servoWrite(left_forward,speed)
     elif direction == "backward":
         RPL.servoWrite(left_forward,0)
-        RPL.servoWrite(left_backward,20000)
+        RPL.servoWrite(left_backward,speed)
     else:
         print("Invalid input")
         stop()
@@ -28,10 +28,10 @@ def left(direction):
 def right(direction):
     if direction == "forward":
         RPL.servoWrite(right_backward,0)
-        RPL.servoWrite(right_forward,20000)
+        RPL.servoWrite(right_forward,speed)
     elif direction == "backward":
         RPL.servoWrite(right_forward,0)
-        RPL.servoWrite(right_backward,20000)
+        RPL.servoWrite(right_backward,speed)
     else:
         print("Invalid input")
         stop()
