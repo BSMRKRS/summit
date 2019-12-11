@@ -5,6 +5,7 @@ backward_pin = 0
 forward_pin  = 1
 right_pin    = 2
 left_pin     = 3
+pins = [backward_pin,forward_pin,right_pin,left_pin]
 speed = 20000 #maximum frequency
 
 race_mode = False
@@ -15,10 +16,8 @@ def interrupted(signum, frame):
     stop()
 
 def stop():
-    RPL.servoWrite(backward_pin,0)
-    RPL.servoWrite(forward_pin,0)
-    RPL.servoWrite(right_pin,0)
-    RPL.servoWrite(left_pin,0)
+    for pin in pins:
+        RPL.servoWrite(pin,0)
 
 def forward():
     RPL.servoWrite(backward_pin,0)
@@ -34,11 +33,33 @@ def left():
     RPL.servoWrite(right_pin,0)
     RPL.servoWrite(left_pin,17000)
 
+def calibrate():
+    calibration = True
+    while calibration:
+        print("Enter the pin number you want to test")
+        print("Enter q to quit calibration")
+        pin = raw_input("")
+        try:
+            pin = int(pin)
+        except:
+            if pin == 'q':
+                calibration = False
+                signal.signal(signal.SIGALRM, interrupted)
+                tty.setraw(sys.stdin.fileno())
+                print("Press 1 to quit")
+                print("Press c to calibrate")
+            else:
+                print("Error setting that pin")
+        RPL.servoWrite(pin,speed)
+        time.sleep(1)
+        RPL.servoWrite(pin,0)
 
 
+
+print("Press 1 to quit")
+print("Press c to calibrate")
 signal.signal(signal.SIGALRM, interrupted)
 tty.setraw(sys.stdin.fileno())
-print("Press 1 to quit")
 while True:
     DELAY = 0.5
     #key press delay is 0.5 seconds
@@ -49,6 +70,10 @@ while True:
         stop()
         termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
         break
+    elif ch == 'c':
+        stop()
+        termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
+        calibrate()
     elif ch == ' ':
         print("Emergency stop")
         stop()
