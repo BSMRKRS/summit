@@ -1,5 +1,6 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
+
 foot_down = 5
 foot_up = 4
 right_backward = 3
@@ -16,11 +17,11 @@ def interrupted(signum, frame):
     stop()
 
 def extend():
-    RPL.servoWrite(foot_down,10000)
+    RPL.servoWrite(foot_down,0)
     RPL.servoWrite(foot_up,10000)
 
 def retract():
-    RPL.servoWrite(foot_up,10000)
+    RPL.servoWrite(foot_up,0)
     RPL.servoWrite(foot_down,10000)
 
 def left(direction):
