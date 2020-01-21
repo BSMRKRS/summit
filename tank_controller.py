@@ -1,6 +1,8 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
+foot_down = 5
+foot_up = 4
 right_backward = 3
 right_forward  = 2
 left_backward  = 1
@@ -13,6 +15,14 @@ old_settings = termios.tcgetattr(fd)
 
 def interrupted(signum, frame):
     stop()
+
+def extend():
+    RPL.servoWrite(foot_down,0)
+    RPL.servoWrite(foot_up,10000)
+
+def retract():
+    RPL.servoWrite(foot_up,0)
+    RPL.servoWrite(foot_down,10000)
 
 def left(direction):
     if direction == "forward":
@@ -41,6 +51,9 @@ def stop():
     RPL.servoWrite(right_forward,0)
     RPL.servoWrite(left_backward,0)
     RPL.servoWrite(left_forward,0)
+    RPL.servoWrite(foot_up,0)
+    RPL.servoWrite(foot_down,0)
+
 
 
 
@@ -74,6 +87,10 @@ try:
         elif ch == 'a':
             left("backward")
             right("forward")
+        elif ch == 'z':
+            extend()
+        elif ch == 'x':
+            retract()
 except:
     print("Connection Dropped")
     stop()
