@@ -1,8 +1,8 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
-foot_down = 5
-foot_up = 4
+foot_down = 4
+foot_up = 5
 right_backward = 3
 right_forward  = 2
 left_backward  = 1
