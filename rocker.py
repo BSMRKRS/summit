@@ -40,6 +40,8 @@ old_settings = termios.tcgetattr(fd)
 #controller = Controller(0,1,2,3) #pass in pin numbers
 #controller.control(0,1) #The first 0 or 1 determines left or right, the second 0 or 1 determines forward or backward
 
+hbridge_1 = Controller(0,1,2,3)
+
 
 def interrupted(signum, frame):
     stop()
@@ -47,7 +49,7 @@ def interrupted(signum, frame):
 
 
 def stop():
-
+    hbridge_1.stop()
 
 
 
@@ -69,6 +71,18 @@ try:
         elif ch == ' ':
             print("DEUS HALT")
             stop()
+        elif ch == 'w':
+            hbridge_1.control(0,0)
+            hbridge_1.control(1,0)
+        elif ch == 's':
+            hbridge_1.control(0,1)
+            hbridge_1.control(1,1)
+        elif ch == 'd':
+            hbridge_1.control(0,0)
+            hbridge_1.control(1,1)
+        elif ch == 'a':
+            hbridge_1.control(0,1)
+            hbridge_1.control(1,0)
 
 except:
     print("Connection Dropped")
