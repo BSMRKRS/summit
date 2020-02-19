@@ -1,12 +1,15 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
-backward_pin = 0
-forward_pin  = 1
+#maximum = 20k
+dir_pin = 1
+pwm_pin = 0
+max_speed = 10000 #maximum frequency
+back_speed = 12000
+dir_speed = 10000
 steering_pin = 3
-speed = 50000 #maximum frequency
 
-race_mode = False
+#race_mode = False
 fd = sys.stdin.fileno()
 old_settings = termios.tcgetattr(fd)
 
@@ -14,21 +17,20 @@ def interrupted(signum, frame):
     stop()
 
 def stop():
-    RPL.servoWrite(backward_pin, 0)
-    RPL.servoWrite(forward_pin, 0)
+    RPL.servoWrite(pwm_pin, 0)
     RPL.servoWrite(steering_pin, 1500)
 
 def forward():
-    RPL.servoWrite(backward_pin,0)
-    RPL.servoWrite(forward_pin,speed)
+    RPL.servoWrite(dir_pin, 0)
+    RPL.servoWrite(pwm_pin, max_speed)
 def backward():
-    RPL.servoWrite(forward_pin,0)
-    RPL.servoWrite(backward_pin,speed)
+    RPL.servoWrite(dir_pin, dir_speed)
+    RPL.servoWrite(pwm_pin, back_speed)
 
 def right():
-    RPL.servoWrite(steering_pin, 1400)
+    RPL.servoWrite(steering_pin, 2000)
 def left():
-    RPL.servoWrite(steering_pin, 1600)
+    RPL.servoWrite(steering_pin, 1000)
 
 def calibrate():
     calibration = True
@@ -47,7 +49,7 @@ def calibrate():
                 print("Press c to calibrate")
             else:
                 print("Error setting that pin")
-        RPL.servoWrite(pin,speed)
+        RPL.servoWrite(pin,max_speed / 2)
         time.sleep(1)
         RPL.servoWrite(pin,0)
 
@@ -71,9 +73,13 @@ while True:
         stop()
         termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
         calibrate()
+
+
     elif ch == ' ':
-        print("Emergency stop")
+        print("Deus Halt")
         stop()
+
+
     elif ch == 'w':
         forward()
     elif ch == 's':
@@ -82,11 +88,3 @@ while True:
         left()
     elif ch == 'd':
         right()
-    # elif ch == 'q':
-    # elif ch == 'e':
-
-
-
-
-#0 back, 1 forward, 2 right 3 left
-#20,000             #1700
