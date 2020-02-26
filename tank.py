@@ -1,37 +1,48 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
-backward_pin = 0
-forward_pin  = 1
-turn_pin     = 2
+move_pin = [1,0]
+turn_pin = [3,2]
 
-backward_pin = 0
-forward_pin = 1
 speed = 20000 #maximum frequency
 
 race_mode = False
 fd = sys.stdin.fileno()
 old_settings = termios.tcgetattr(fd)
 
+def power(percent):
+    percentage = percent / 100.0
+    freq = speed * percentage
+    freq = int(freq)
+    print(freq)
+    return freq
+
+
 def interrupted(signum, frame):
     stop()
 
 def stop():
-    RPL.servoWrite(backward_pin, 0)
-    RPL.servoWrite(forward_pin, 0)
-    RPL.servoWrite(turn_pin, 1500)
+    RPL.servoWrite(turn_pin[0], 0)
+    RPL.servoWrite(move_pin[0], 0)
 
-def forward():
-    RPL.servoWrite(backward_pin,0)
-    RPL.servoWrite(forward_pin,speed)
-def backward():
-    RPL.servoWrite(forward_pin,0)
-    RPL.servoWrite(backward_pin,speed)
+def forward(percent):
+    stop()
+    RPL.servoWrite(move_pin[1], 0)
+    RPL.servoWrite(move_pin[0], power(percent))
+def backward(percent):
+    stop()
+    RPL.servoWrite(move_pin[1], 1)
+    RPL.servoWrite(move_pin[0], speed * (percent / 100))
 
-def right():
-    RPL.servoWrite(turn_pin, 1400)
-def left():
-    RPL.servoWrite(turn_pin, 1600)
+
+def right(percent):
+    stop()
+    RPL.servoWrite(turn_pin[1], 0)
+    RPL.servoWrite(turn_pin[0], speed * (percent / 100))
+def left(percent):
+    stop()
+    RPL.servoWrite(turn_pin[1], 1)
+    RPL.servoWrite(turn_pin[0], speed * (percent / 100))
 
 def calibrate():
     calibration = True
@@ -78,13 +89,13 @@ while True:
         print("Emergency stop")
         stop()
     elif ch == 'w':
-        forward()
+        forward(20)
     elif ch == 's':
-        backward()
+        backward(20)
     elif ch == 'a':
-        left()
+        left(15)
     elif ch == 'd':
-        right()
+        right(15)
     # elif ch == 'q':
     # elif ch == 'e':
 
