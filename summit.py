@@ -4,10 +4,10 @@ import sys,tty,termios,signal,setup,time
 #maximum = 20k
 dir_pin = 1
 pwm_pin = 0
-max_speed = 10000 #maximum frequency
-back_speed = 12000
+max_speed = 20000 #maximum frequency
 dir_speed = 10000
 steering_pin = 3
+
 
 #race_mode = False
 fd = sys.stdin.fileno()
@@ -20,17 +20,17 @@ def stop():
     RPL.servoWrite(pwm_pin, 0)
     RPL.servoWrite(steering_pin, 1500)
 
-def forward():
+def forward(percent):
     RPL.servoWrite(dir_pin, 0)
-    RPL.servoWrite(pwm_pin, max_speed)
-def backward():
+    RPL.servoWrite(pwm_pin, max_speed * (percent / 100))
+def backward(percent):
     RPL.servoWrite(dir_pin, dir_speed)
-    RPL.servoWrite(pwm_pin, back_speed)
+    RPL.servoWrite(pwm_pin, max_speed * (percent / 100))
 
-def right():
-    RPL.servoWrite(steering_pin, 2000)
-def left():
-    RPL.servoWrite(steering_pin, 1000)
+def right(percent):
+    RPL.servoWrite(steering_pin, 5 * percent + 1500)
+def left(percent):
+    RPL.servoWrite(steering_pin, -5 * percent + 1500)
 
 def calibrate():
     calibration = True
@@ -81,10 +81,14 @@ while True:
 
 
     elif ch == 'w':
-        forward()
+        forward(50)
     elif ch == 's':
-        backward()
+        backward(75)
     elif ch == 'a':
-        left()
+        left(100)
     elif ch == 'd':
-        right()
+        right(100)
+    elif ch == 'q':
+        left(25)
+    elif ch == 'e':
+        right(25)
