@@ -14,7 +14,6 @@ def power(percent):
     percentage = percent / 100.0
     freq = speed * percentage
     freq = int(freq)
-    print(freq)
     return freq
 
 
@@ -26,23 +25,27 @@ def stop():
     RPL.servoWrite(move_pin[0], 0)
 
 def forward(percent):
-    stop()
+    RPL.servoWrite(turn_pin[0], 0)
+
     RPL.servoWrite(move_pin[1], 0)
     RPL.servoWrite(move_pin[0], power(percent))
 def backward(percent):
-    stop()
+    RPL.servoWrite(turn_pin[0], 0)
+
     RPL.servoWrite(move_pin[1], 1)
-    RPL.servoWrite(move_pin[0], speed * (percent / 100))
+    RPL.servoWrite(move_pin[0], power(percent))
 
 
 def right(percent):
-    stop()
+    RPL.servoWrite(move_pin[0], 0)
+
     RPL.servoWrite(turn_pin[1], 0)
-    RPL.servoWrite(turn_pin[0], speed * (percent / 100))
+    RPL.servoWrite(turn_pin[0], power(percent))
 def left(percent):
-    stop()
+    RPL.servoWrite(move_pin[0], 0)
+
     RPL.servoWrite(turn_pin[1], 1)
-    RPL.servoWrite(turn_pin[0], speed * (percent / 100))
+    RPL.servoWrite(turn_pin[0], power(percent))
 
 def calibrate():
     calibration = True
