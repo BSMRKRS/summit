@@ -2,8 +2,10 @@ from cytron import Cytron
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
+controlling = False
+inputs = ["stop"]
 
-motor_controller = Cytron(max_pwm=20000, percent_power=50,
+motor_controller = Cytron(max_pwm=20000, percent_power=25,
 m1_pwm=1, m1_dir=0, m1_name="Linear Motor",
 m2_pwm=3, m2_dir=2, m2_name="Turning Motor")
 
@@ -25,6 +27,8 @@ def interrupted(signum, frame):
     stop()
 
 def stop():
+    controlling = False
+    inputs.append("stop")
     motor_controller.stop(motor=move)
     motor_controller.stop(motor=turn)
 
@@ -62,17 +66,23 @@ while True:
     elif ch == ' ':
         print("Emergency stop")
         stop()
-    elif ch == 'w':
-        forward()
-    elif ch == 's':
-        backward()
-    elif ch == 'a':
-        left()
-    elif ch == 'd':
-        right()
-    # elif ch == 'q':
-    # elif ch == 'e':
 
+    else:
+        direction_input = ch
+        controlling = True
+
+
+    if controlling:
+        if direction_input != inputs[len(inputs) - 1]:
+            inputs.append(direction_input)
+            if direction_input == "w":
+                forward()
+            elif direction_input == "s":
+                backward()
+            elif direction_input == "a":
+                left()
+            elif direction_input == "d":
+                right()
 
 
 
