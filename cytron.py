@@ -1,15 +1,26 @@
-# import RoboPiLib as RoboPiLib
-# import setup
+import RoboPiLib as RPL
+import setup
 
 class Cytron:
     ############################################################################
     ###Initializing###
     ##################
 
-    def __init__(self, max_pwm, m1_pwm, m1_dir, m1_name=None, m2_pwm=None, m2_dir=None, m2_name=None, name=None, percent_power=100):
+    def __init__(self,
+    max_pwm,
+    m1_pwm,
+    m1_dir,
+    m1_name=None,
+    m2_pwm=None,
+    m2_dir=None,
+    m2_name=None,
+    name=None,
+    percent_power=100):
+
         self.name = name
         self.m1 = {"pwm":m1_pwm,"dir":m1_dir,"name":m1_name}
         self.m2 = {"pwm":m2_pwm,"dir":m2_dir,"name":m2_name}
+
 
         #Identification for debugger
         if self.name == None:
@@ -48,16 +59,24 @@ class Cytron:
 
 
     ###Moving the motors
-    def control(self, motor=self.m1, direction=True, power=self.dpower):
-        dir = 0
+    # def control(self, motor=self.m1, direction=True, power=self.dpower):
+    def control(self, motor=None, direction=True, power=None):
+
+        if motor == None:
+            motor = self.m1
+        if power == None:
+            power = self.dpower
+
+        dir = 10000
         if direction:
-            dir = 10000
+            dir = 0
 
         pwm = self.power(power)
 
         try:
             RPL.servoWrite(motor["dir"], dir)
             RPL.servoWrite(motor["pwm"], pwm)
+
         except Exception as error:
             print("{} failed to write motor {} at {} because: {}").format(self, motor["name"], pwm, error)
             try:
@@ -67,6 +86,8 @@ class Cytron:
                 pass
 
     #stopping the motors
-    def stop(self, motor=self.m1):
-        self.control(power=0)
+    def stop(self, motor=None):
+        if motor == None:
+            motor = self.m1
+        self.control(motor=motor, power=0)
    #############################################################################

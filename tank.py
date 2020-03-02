@@ -3,7 +3,10 @@ import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
 
-motor_controller = Cytron(max_pwm=20000, default_power=20, m1_pwm=1, m1_dir=0, m1_name="Linear Motor", m2_pwm=3, m2_dir=2, m2_name="Turning Motor")
+motor_controller = Cytron(max_pwm=20000, percent_power=50,
+m1_pwm=1, m1_dir=0, m1_name="Linear Motor",
+m2_pwm=3, m2_dir=2, m2_name="Turning Motor")
+
 move = motor_controller.m1
 turn = motor_controller.m2
 
@@ -25,6 +28,7 @@ def stop():
     motor_controller.stop(motor=move)
     motor_controller.stop(motor=turn)
 
+
 def forward():
     motor_controller.stop(motor=turn)
     motor_controller.control(motor=move, direction=True)
@@ -32,10 +36,10 @@ def backward():
     motor_controller.stop(motor=turn)
     motor_controller.control(motor=move, direction=False)
 
-def left():
+def right():
     motor_controller.stop(motor=move)
     motor_controller.control(motor=turn, direction=True)
-def right():
+def left():
     motor_controller.stop(motor=move)
     motor_controller.control(motor=turn, direction=False)
 
