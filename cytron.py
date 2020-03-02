@@ -49,9 +49,14 @@ class Cytron:
 
     ###Moving the motors
     def control(self, motor=self.m1, direction=True, power=self.dpower):
+        dir = 0
+        if direction:
+            dir = 10000
+
         pwm = self.power(power)
+
         try:
-            RPL.servoWrite(motor["dir"], direction)
+            RPL.servoWrite(motor["dir"], dir)
             RPL.servoWrite(motor["pwm"], pwm)
         except Exception as error:
             print("{} failed to write motor {} at {} because: {}").format(self, motor["name"], pwm, error)
