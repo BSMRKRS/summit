@@ -38,7 +38,7 @@ def forward():
     motor_controller.control(motor=move, direction=True)
 def backward():
     motor_controller.stop(motor=turn)
-    motor_controller.control(motor=move, direction=False)
+    motor_controller.control(motor=move, direction=False, power=35)
 
 def right():
     motor_controller.stop(motor=move)
@@ -65,6 +65,7 @@ while True:
         break
     elif ch == ' ':
         print("Emergency stop")
+        controlling = False
         stop()
 
     else:
@@ -73,6 +74,7 @@ while True:
 
 
     if controlling:
+        print("you are currently controlling")
         if direction_input != inputs[len(inputs) - 1]:
             inputs.append(direction_input)
             if direction_input == "w":
