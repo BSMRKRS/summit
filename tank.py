@@ -2,6 +2,10 @@ from cytron import Cytron
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
+
+foot_down = 1
+foot_up = 2
+
 controlling = False
 inputs = ["stop"]
 
@@ -31,7 +35,8 @@ def stop():
     inputs.append("stop")
     motor_controller.stop(motor=move)
     motor_controller.stop(motor=turn)
-
+    RPL.servoWrite(foot_up,0)
+    RPL.servoWrite(foot_down,0)
 
 def forward():
     motor_controller.stop(motor=turn)
@@ -47,7 +52,12 @@ def left():
     motor_controller.stop(motor=move)
     motor_controller.control(motor=turn, direction=False)
 
-
+def extend():
+    RPL.servoWrite(foot_up, 0)
+    RPL.servoWrite(foot_down, 20000)
+def retract():
+    RPL.servoWrite(foot_down, 0)
+    RPL.servoWrite(foot_up, 20000)    
 
 
 print("Press 1 to quit")
@@ -85,6 +95,10 @@ while True:
                 left()
             elif direction_input == "d":
                 right()
+            elif direction_input == "z":
+                extend()
+            elif direction_input == "x":
+                retract()
 
 
 
