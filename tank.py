@@ -3,8 +3,8 @@ import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
 
 
-foot_down = 1
-foot_up = 2
+foot_down = 5
+foot_up = 6
 
 controlling = False
 inputs = ["stop"]
