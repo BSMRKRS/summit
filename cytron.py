@@ -91,3 +91,10 @@ class Cytron:
             motor = self.m1
         self.control(motor=motor, power=0)
    #############################################################################
+
+
+
+###EXAMPLE:
+# motor_controller = Cytron(max_pwm=20000, m1_pwm=0, m1_dir=1)
+# m1 = motor_controller.m1
+# motor_controller.control(motor=m1,direction=True)
