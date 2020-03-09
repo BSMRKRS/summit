@@ -67,7 +67,7 @@ class Cytron:
         if power == None:
             power = self.dpower
 
-        dir = 10000
+        dir = 20000
         if direction:
             dir = 0
 

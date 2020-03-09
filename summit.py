@@ -1,12 +1,15 @@
 import RoboPiLib as RPL
 import sys,tty,termios,signal,setup,time
+from cytron import Cytron
 
 #maximum = 20k
-dir_pin = 1
-pwm_pin = 0
-max_speed = 20000 #maximum frequency
-dir_speed = 10000
 steering_pin = 3
+
+motor_controller = Cytron(max_pwm=20000, percent_power=10, m1_pwm=0, m1_dir=1)
+motor = motor_controller.m1
+
+RPL.pinMode(motor_controller.m1["pwm"], RPL.PWM)
+RPL.pinMode(motor_controller.m1["dir"], RPL.OUTPUT)
 
 
 #race_mode = False
@@ -17,42 +20,14 @@ def interrupted(signum, frame):
     stop()
 
 def stop():
-    RPL.servoWrite(pwm_pin, 0)
+    motor_controller.stop()
     RPL.servoWrite(steering_pin, 1500)
 
-def forward(percent):
-    RPL.servoWrite(dir_pin, 0)
-    RPL.servoWrite(pwm_pin, max_speed * (percent / 100))
-def backward(percent):
-    RPL.servoWrite(dir_pin, dir_speed)
-    RPL.servoWrite(pwm_pin, max_speed * (percent / 100))
 
 def right(percent):
     RPL.servoWrite(steering_pin, 5 * percent + 1500)
 def left(percent):
     RPL.servoWrite(steering_pin, -5 * percent + 1500)
-
-def calibrate():
-    calibration = True
-    while calibration:
-        print("Enter the pin number you want to test")
-        print("Enter q to quit calibration")
-        pin = raw_input("")
-        try:
-            pin = int(pin)
-        except:
-            if pin == 'q':
-                calibration = False
-                signal.signal(signal.SIGALRM, interrupted)
-                tty.setraw(sys.stdin.fileno())
-                print("Press 1 to quit")
-                print("Press c to calibrate")
-            else:
-                print("Error setting that pin")
-        RPL.servoWrite(pin,max_speed / 2)
-        time.sleep(1)
-        RPL.servoWrite(pin,0)
-
 
 
 print("Press 1 to quit")
@@ -69,10 +44,6 @@ while True:
         stop()
         termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
         break
-    elif ch == 'c':
-        stop()
-        termios.tcsetattr(fd,termios.TCSADRAIN, old_settings)
-        calibrate()
 
 
     elif ch == ' ':
@@ -81,9 +52,9 @@ while True:
 
 
     elif ch == 'w':
-        forward(50)
+        motor_controller.control(direction=False, power=40)
     elif ch == 's':
-        backward(75)
+        motor_controller.control(direction=True, power=40)
     elif ch == 'a':
         left(100)
     elif ch == 'd':
