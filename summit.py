@@ -9,8 +9,8 @@ RPL.pinMode(motor_controller.m1["pwm"], RPL.PWM)
 RPL.pinMode(motor_controller.m1["dir"], RPL.OUTPUT)
 
 steering_pin = 3
-power = motor_controller.max_freq / 2
-print("Initialized Motor Speed at {}/{} : 50%".format(power, motor_controller.max_freq))
+pwm_percent = 50
+print("initialized Motor Speed at {}/{} : {}%".format((motor_controller.max_freq * pwm_percent) / 100, motor_controller.max_freq, pwm_percent))
 
 fd = sys.stdin.fileno()
 old_settings = termios.tcgetattr(fd)
@@ -28,20 +28,18 @@ def left(percent):
     RPL.servoWrite(steering_pin, -5 * percent + 1500)
 
 def speed_change(fast):
-    global power
+    global pwm_percent
     if fast:
-        if power + 1000 >= motor_controller.max_freq:
+        if pwm_percent + 5 > 100:
             print("Maximum PWM Reached")
-            power = motor_controller.max_freq
         else:
-            power += 1000
+            pwm_percent += 5
     else:
-        if power - 1000 <= 0:
+        if pwm_percent - 5 < 0:
             print("Minimum PWM Reached")
-            power = 0
         else:
-            power -= 1000
-    print("PWM Frequency Updated: {}/{} : {}%".format(power, motor_controller.max_freq, int(power / motor_controller.max_freq) * 100))
+            pwm_percent -= 5
+    print("PWM Frequency Updated: {}/{} : {}%".format((motor_controller.max_freq * pwm_percent) / 100, motor_controller.max_freq, pwm_percent))
 
 
 
@@ -66,9 +64,9 @@ while True:
 
 
     elif ch == 'w':
-        motor_controller.control(direction=False, power=power)
+        motor_controller.control(direction=False, power=pwm_percent)
     elif ch == 's':
-        motor_controller.control(direction=True, power=power)
+        motor_controller.control(direction=True, power=pwm_percent)
     elif ch == 'a':
         left(100)
     elif ch == 'd':
